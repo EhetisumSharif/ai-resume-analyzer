@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37411.7 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIResumeAnalyzer.Api", "AIResumeAnalyzer.Api\AIResumeAnalyzer.Api.csproj", "{B545478B-B4E0-4943-A87E-E7C9932BF671}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B545478B-B4E0-4943-A87E-E7C9932BF671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B545478B-B4E0-4943-A87E-E7C9932BF671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B545478B-B4E0-4943-A87E-E7C9932BF671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B545478B-B4E0-4943-A87E-E7C9932BF671}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CBB11BDE-DF97-4BC5-96A2-199F45109C1D}
+	EndGlobalSection
+EndGlobal
