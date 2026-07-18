@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIResumeAnalyzer.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4b4826e6e4474648e54319cb28342dc1c8dc3775")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7db4595c3402cc6c9d4cc8f2ca0c6af427b6d7a")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIResumeAnalyzer.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIResumeAnalyzer.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
