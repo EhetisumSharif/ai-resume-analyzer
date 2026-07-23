@@ -18,7 +18,7 @@ namespace AIResumeAnalyzer.Api.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration; // appsettings.json read for JWT settings
+        private readonly IConfiguration _configuration;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
@@ -59,7 +59,7 @@ namespace AIResumeAnalyzer.Api.Controllers
             return Ok(new { message = "Profile registered successfully. Proceed to login." });
         }
 
-        // 2. LOGIN ENDPOINT: api/auth/login (Updated to return dynamic JWT Tokens)
+        // 2. LOGIN ENDPOINT: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
@@ -67,10 +67,7 @@ namespace AIResumeAnalyzer.Api.Controllers
 
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                // fetch user role from the database
                 var userRoles = await _userManager.GetRolesAsync(user);
-
-                // JWT Token generate
                 var token = GenerateJwtToken(user, userRoles);
 
                 return Ok(new
@@ -89,12 +86,13 @@ namespace AIResumeAnalyzer.Api.Controllers
         {
             var authClaims = new List<Claim>
             {
+                // ---Added NameIdentifier so the API can map the UserId correctly ---
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("OperatorName", user.OperatorName ?? string.Empty) // frontend UI will use this claim to display the operator's name
+                new Claim("OperatorName", user.OperatorName ?? string.Empty)
             };
 
-            // user roles are added to the claims for authorization purposes
             foreach (var userRole in roles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -106,7 +104,7 @@ namespace AIResumeAnalyzer.Api.Controllers
             var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
-                expires: DateTime.Now.AddHours(3), // token will expire in 3 hours
+                expires: DateTime.Now.AddHours(3),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -115,7 +113,6 @@ namespace AIResumeAnalyzer.Api.Controllers
         }
     }
 
-    // DTO models outside the controller class
     public class RegisterDto
     {
         public string Name { get; set; } = string.Empty;

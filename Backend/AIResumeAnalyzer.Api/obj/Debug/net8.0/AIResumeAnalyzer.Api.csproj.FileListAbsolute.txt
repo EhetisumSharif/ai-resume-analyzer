@@ -318,3 +318,4 @@ C:\Users\Rafiq's PC\Source\Repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api
 C:\Users\Rafiq's PC\Source\Repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\AIResumeAnalyzer.Api.pdb
 C:\Users\Rafiq's PC\Source\Repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\AIResumeAnalyzer.Api.genruntimeconfig.cache
 C:\Users\Rafiq's PC\Source\Repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\ref\AIResumeAnalyzer.Api.dll
+C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\bin\Debug\net8.0\AIResumeAnalyzer.Api.staticwebassets.runtime.json
