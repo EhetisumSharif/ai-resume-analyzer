@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useAuthStore } from './store/authStore';
 import Dashboard from './components/Dashboard';
+import AdminDashboard from './components/AdminDashboard'; // ১. ইমপোর্ট করো
 
 export default function App() {
-  const { isLoggedIn, signUp, signIn, logout } = useAuthStore();
+  const { isLoggedIn, currentUser, signUp, signIn, logout } = useAuthStore();
   const [isSignUpView, setIsSignUpView] = useState<boolean>(false);
   
   const [name, setName] = useState<string>('');
@@ -21,7 +22,7 @@ export default function App() {
 
     if (isSignUpView) {
       if (password !== confirmPassword) {
-        setError("Security passkeys do not match.");
+        setError("Passwords do not match."); // SRS 1.2
         return;
       }
       const res = signUp({ name, email, password });
@@ -35,12 +36,16 @@ export default function App() {
     } else {
       const res = signIn({ email, password });
       if (!res.success) {
-        setError(res.message);
+        setError(res.message); // SRS 1.5
       }
     }
   };
 
-  if (isLoggedIn) {
+  // ২. ডাইনামিক রোল বেসড রাউটিং লজিক (SRS 1.6, 1.7, 1.8)
+  if (isLoggedIn && currentUser) {
+    if (currentUser.role === 'Admin') {
+      return <AdminDashboard onLogout={logout} />;
+    }
     return <Dashboard onLogout={logout} />;
   }
 
@@ -48,7 +53,7 @@ export default function App() {
     <div className="min-h-screen bg-[#030712] text-slate-100 font-sans antialiased flex items-center justify-center p-0 md:p-6">
       <div className="w-full max-w-5xl bg-[#0b0f19] rounded-none md:rounded-3xl shadow-2xl border-0 md:border border-slate-900 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[650px]">
         
-        {/* Left Interactive Panel */}
+        {/* Left Panel */}
         <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-[#0f172a] via-[#0b0f19] to-[#020617] relative border-r border-slate-900">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl" />
           <div className="flex items-center space-x-3 relative z-10">

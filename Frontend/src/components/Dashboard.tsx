@@ -1,50 +1,65 @@
 import React, { useState } from 'react';
+import FileUpload from './FileUpload';
+import { uploadResume, EvaluationResult } from '../services/resumeService';
 
 interface DashboardProps {
   onLogout: () => void;
 }
 
-interface EvaluationResult {
-  score: number;
-  summary: string;
-  keywords: string[];
-  improvements: string[];
-}
-
 export default function Dashboard({ onLogout }: DashboardProps) {
-  const [file, setFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const [result, setResult] = useState<EvaluationResult | null>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+  // File selection handler passed to FileUpload component
+  const handleFileSelect = (file: File | null) => {
+    setSelectedFile(file);
+    setErrorMsg('');
   };
 
-  const handleUpload = (e: React.FormEvent) => {
+  // Submit & Process via Axios Service
+  const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return;
+    if (!selectedFile) {
+      setErrorMsg('Please select a resume file first.');
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setErrorMsg('');
+
+    try {
+      // Calling Axios Service
+      const data = await uploadResume(selectedFile);
+      setResult(data);
+    } catch (err: any) {
+      console.error("Backend Connection Error:", err);
+      
+      // Error Feedback
+      const message = err.response?.data?.message || 'Failed to connect to backend server.';
+      setErrorMsg(`API Warning: ${message}`);
+
+      // Fallback Data for UI testing while backend is offline/developing
       setResult({
         score: 91,
-        summary: "Profile data array registers inside top tier percentiles. Layout configuration demonstrates structured semantic taxonomy. Recommended actions require refining dynamic impact parameters.",
-        keywords: ["React.js", "TypeScript", "Tailwind CSS", "RESTful Core API", "Node.js Architecture", "Git Version Control"],
+        summary: "Profile data array registers inside top tier percentiles. Layout configuration demonstrates structured semantic taxonomy.",
+        keywords: ["React.js", "TypeScript", "Tailwind CSS", "RESTful Core API", "ASP.NET Core", "Git"],
         improvements: [
           "Inject precise numerical analytics into historical performance metrics.",
           "Expose relative production hyperlinks within core repository modules.",
           "Strengthen imperative operational verbs across asset descriptions."
         ]
       });
-    }, 2000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 font-sans antialiased flex flex-col md:flex-row">
       
-      {/* Premium Flat Sidebar */}
+      {/* Sidebar */}
       <aside className="w-full md:w-64 bg-[#0b0f19] border-b md:border-b-0 md:border-r border-slate-900 flex flex-col justify-between p-6 shrink-0">
         <div className="space-y-8">
           <div className="flex items-center space-x-3">
@@ -75,7 +90,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       {/* Main Workspace Frame */}
       <div className="flex-1 flex flex-col min-w-0">
         
-        {/* Horizontal Status Bar */}
+        {/* Status Bar */}
         <header className="h-16 bg-[#0b0f19] border-b border-slate-900 px-8 flex items-center justify-between shadow-sm">
           <div className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Analytical Engine</div>
           <div className="flex items-center space-x-2 bg-emerald-500/5 border border-emerald-500/20 px-3 py-1 rounded-full">
@@ -84,7 +99,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </div>
         </header>
 
-        {/* Dynamic Workspace Container */}
+        {/* Dynamic Workspace */}
         <main className="flex-1 p-6 lg:p-10 max-w-6xl w-full mx-auto space-y-8">
           
           <div className="border-b border-slate-900 pb-4">
@@ -102,25 +117,32 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               </div>
 
               <form onSubmit={handleUpload} className="space-y-4">
-                <div className="group border border-slate-800 hover:border-slate-700 rounded-xl p-8 text-center transition-all relative bg-[#030712] flex flex-col items-center justify-center min-h-[160px]">
-                  <input type="file" accept=".pdf,.docx,.txt" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                  <div className="h-10 w-10 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-center mb-3 group-hover:border-indigo-500/30 transition-colors">
-                    <svg className="w-5 h-5 text-slate-500 group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                    </svg>
-                  </div>
-                  <p className="text-xs font-semibold text-slate-300 max-w-[200px] truncate px-2">
-                    {file ? file.name : "Inject profile record"}
+                
+                {/* File Upload Component */}
+                <FileUpload onFileSelect={handleFileSelect} />
+
+                {errorMsg && (
+                  <p className="text-[11px] font-mono text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-lg">
+                    {errorMsg}
                   </p>
-                  {!file && <p className="text-[10px] text-slate-600 mt-1">PDF, DOCX formats verified</p>}
-                </div>
+                )}
 
                 <button
                   type="submit"
-                  disabled={!file || loading}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-900 disabled:text-slate-700 border border-indigo-500/20 disabled:border-0 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.99]"
+                  disabled={!selectedFile || loading}
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-900 disabled:text-slate-700 border border-indigo-500/20 disabled:border-0 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-[0.99] cursor-pointer"
                 >
-                  {loading ? "Compiling Evaluation Matrix..." : "Initialize Verification"}
+                  {loading ? (
+                    <span className="flex items-center justify-center space-x-2">
+                      <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Analyzing Document...</span>
+                    </span>
+                  ) : (
+                    "Initialize Verification"
+                  )}
                 </button>
               </form>
             </div>
@@ -146,7 +168,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                   {/* Text Summary */}
                   <div className="space-y-1.5">
                     <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">Telemetry Feedback</span>
-                    <p className="text-xs text-slate-300 leading-relaxed bg-[#030712]/50 p-3 rounded-lg border border-slate-850/60">
+                    <p className="text-xs text-slate-300 leading-relaxed bg-[#030712]/50 p-3 rounded-lg border border-slate-800/60">
                       {result.summary}
                     </p>
                   </div>
