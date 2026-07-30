@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AIResumeAnalyzer.Api.Data;
 using AIResumeAnalyzer.Api.Models;
@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.SemanticKernel;
+using AIResumeAnalyzer.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +52,20 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 4. Configure CORS to prevent "Failed to fetch" errors across environments
+// --- 4. Configure Semantic Kernel & Custom Services ---
+var kernelSettings = builder.Configuration.GetSection("SemanticKernel");
+string modelId = kernelSettings["ModelId"] ?? "llama3";
+Uri endpoint = new Uri(kernelSettings["Endpoint"] ?? "http://localhost:11434");
+
+builder.Services.AddKernel();
+builder.Services.AddOllamaChatCompletion(modelId, endpoint);
+
+// Services Dependency Injection Registration
+builder.Services.AddScoped<IAiScoringService, AiScoringService>();
+builder.Services.AddScoped<ResumeProcessor>(); // <-- ResumeProcessor সার্ভিসটি এখানে যুক্ত করা হয়েছে
+// ------------------------------------------------------
+
+// 5. Configure CORS to prevent "Failed to fetch" errors across environments
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using AIResumeAnalyzer.Api.Data;
 using AIResumeAnalyzer.Api.Models;
-using AIResumeAnalyzer.Api.Services; 
+using AIResumeAnalyzer.Api.Services;
 using System.Security.Claims;
 using System.IO;
 
@@ -16,16 +16,22 @@ namespace AIResumeAnalyzer.Api.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
         private readonly ResumeProcessor _resumeProcessor;
+        private readonly IAiScoringService _aiScoringService;
 
-        public ResumeController(ApplicationDbContext context, IWebHostEnvironment env, ResumeProcessor resumeProcessor)
+        public ResumeController(
+            ApplicationDbContext context,
+            IWebHostEnvironment env,
+            ResumeProcessor resumeProcessor,
+            IAiScoringService aiScoringService)
         {
             _context = context;
             _env = env;
             _resumeProcessor = resumeProcessor;
+            _aiScoringService = aiScoringService;
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadResume(IFormFile file)
+        public async Task<IActionResult> UploadResume(IFormFile file, [FromForm] string? jobDescription)
         {
             if (file == null || file.Length == 0)
                 return BadRequest(new { message = "No file uploaded." });
@@ -49,44 +55,53 @@ namespace AIResumeAnalyzer.Api.Controllers
                 if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
                 if (!Directory.Exists(previewsFolder)) Directory.CreateDirectory(previewsFolder);
 
-                var resumeId = Guid.NewGuid(); // Generate ID early for naming files
+                var resumeId = Guid.NewGuid();
                 string uniqueFileName = resumeId.ToString() + extension;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Save physical file
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                string? extractedText = null;
+                string? previewUrl = null;
+
+                // 🚀 MASTER FIX: Convert file to byte array once!
+                byte[] fileBytes;
+                using (var ms = new MemoryStream())
                 {
-                    await file.CopyToAsync(stream);
+                    await file.CopyToAsync(ms);
+                    fileBytes = ms.ToArray(); // Save in memory
                 }
 
-                string extractedText = null;
-                string previewUrl = null;
+                // 1. Save physical file using the byte array
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await fileStream.WriteAsync(fileBytes, 0, fileBytes.Length);
+                }
 
-                // Process PDF specifically
+                // 2. Process PDF Specifically
                 if (extension == ".pdf")
                 {
-                    using (var memoryStream = new MemoryStream())
+                    // Create a FRESH stream just for Text Extraction
+                    using (var pdfStreamForText = new MemoryStream(fileBytes))
                     {
-                        await file.CopyToAsync(memoryStream);
+                        extractedText = _resumeProcessor.ExtractTextFromPdf(pdfStreamForText);
+                    } // iTextSharp closes this stream? No problem!
 
-                        // Extract text
-                        extractedText = _resumeProcessor.ExtractTextFromPdf(memoryStream);
-
-                        // Generate preview image
-                        _resumeProcessor.GeneratePreviewImage(memoryStream, previewsFolder, resumeId.ToString());
+                    // Create another FRESH stream just for Image Generation
+                    using (var pdfStreamForImage = new MemoryStream(fileBytes))
+                    {
+                        _resumeProcessor.GeneratePreviewImage(pdfStreamForImage, previewsFolder, resumeId.ToString());
                         previewUrl = $"/uploads/previews/{resumeId}_preview.png";
-                    }
+                    } // ImageMagick closes this one? Also fine!
                 }
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var resume = new Resume
                 {
-                    Id = resumeId, // Use the generated Guid (if your model uses Guid for Id)
+                    Id = resumeId,
                     FileName = file.FileName,
                     FilePath = filePath,
-                    FileType = extension.Replace(".", ""), // "pdf" or "docx"
-                    ExtractedText = extractedText, // Save extracted text to DB
+                    FileType = extension.Replace(".", ""),
+                    ExtractedText = extractedText,
                     UploadedAt = DateTime.UtcNow,
                     UserId = userId
                 };
@@ -94,17 +109,31 @@ namespace AIResumeAnalyzer.Api.Controllers
                 _context.Resumes.Add(resume);
                 await _context.SaveChangesAsync();
 
+                // 3. Auto AI Analysis Logic
+                AtsAnalysisResultDto? aiAnalysis = null;
+                if (!string.IsNullOrWhiteSpace(extractedText) && !string.IsNullOrWhiteSpace(jobDescription))
+                {
+                    aiAnalysis = await _aiScoringService.EvaluateResumeAsync(extractedText, jobDescription);
+                }
+
                 return Ok(new
                 {
                     message = "Resume uploaded and processed successfully!",
                     fileName = file.FileName,
                     resumeId = resume.Id,
-                    preview = previewUrl
+                    preview = previewUrl,
+                    extractedText = extractedText,
+                    analysis = aiAnalysis
                 });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+                return StatusCode(500, new
+                {
+                    message = "Internal server error",
+                    error = ex.Message,
+                    innerError = ex.InnerException?.Message
+                });
             }
         }
     }
