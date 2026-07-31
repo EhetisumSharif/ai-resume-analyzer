@@ -33,5 +33,7 @@ namespace AIResumeAnalyzer.Api.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? CompletedAt { get; set; }
+        public string? FeedbackJson { get; set; }
+        public DateTime AnalyzedAt { get; set; }
     }
 }

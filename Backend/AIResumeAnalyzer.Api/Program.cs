@@ -63,6 +63,7 @@ builder.Services.AddOllamaChatCompletion(modelId, endpoint);
 // Services Dependency Injection Registration
 builder.Services.AddScoped<IAiScoringService, AiScoringService>();
 builder.Services.AddScoped<ResumeProcessor>(); // <-- ResumeProcessor সার্ভিসটি এখানে যুক্ত করা হয়েছে
+builder.Services.AddScoped<AiAnalysisService>();
 // ------------------------------------------------------
 
 // 5. Configure CORS to prevent "Failed to fetch" errors across environments
