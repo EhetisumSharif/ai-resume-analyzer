@@ -1,14 +1,20 @@
 import React, { useState, useRef } from 'react';
+import ScoreCard from './ScoreCard'; // SCRUM-35 Component Import
 
 interface FileUploadProps {
   onFileSelect?: (file: File | null) => void;
+  onAnalyze?: (file: File) => void;
 }
 
-export default function FileUpload({ onFileSelect }: FileUploadProps) {
+export default function FileUpload({ onFileSelect, onAnalyze }: FileUploadProps) {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  
+  // SCRUM-34 & SCRUM-35 States
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [analysisResult, setAnalysisResult] = useState<{ score: number; feedback: string[] } | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -16,7 +22,6 @@ export default function FileUpload({ onFileSelect }: FileUploadProps) {
     if (!files || files.length === 0) return;
     const file = files[0];
     
-    // Validation: PDF or DOCX only, max size 5MB
     const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
       setErrorMsg('Invalid format. Please upload PDF or DOCX files.');
@@ -30,6 +35,7 @@ export default function FileUpload({ onFileSelect }: FileUploadProps) {
 
     setErrorMsg('');
     setSelectedFile(file);
+    setAnalysisResult(null);
 
     if (file.type === 'application/pdf') {
       const url = URL.createObjectURL(file);
@@ -65,8 +71,32 @@ export default function FileUpload({ onFileSelect }: FileUploadProps) {
   const removeFile = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
+    setAnalysisResult(null);
     if (inputRef.current) inputRef.current.value = '';
     if (onFileSelect) onFileSelect(null);
+  };
+
+  const handleAnalyzeClick = () => {
+    if (!selectedFile) return;
+
+    if (onAnalyze) {
+      onAnalyze(selectedFile);
+    }
+
+    setIsLoading(true);
+    setAnalysisResult(null);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setAnalysisResult({
+        score: 82,
+        feedback: [
+          'Strong technical skill set alignment with backend requirements.',
+          'Add quantitative metrics in your work experience descriptions.',
+          'Consider organizing project sections with clear bullet points.'
+        ]
+      });
+    }, 2500);
   };
 
   return (
@@ -143,7 +173,35 @@ export default function FileUpload({ onFileSelect }: FileUploadProps) {
               <iframe src={previewUrl} className="w-full h-64 rounded-lg bg-white" title="Resume Preview" />
             </div>
           )}
+
+          {/* Action Button / Loading State (SCRUM-34) */}
+          <div className="pt-2">
+            {isLoading ? (
+              <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center space-x-3">
+                <svg className="animate-spin h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-sm font-medium text-indigo-300">Analyzing Resume with AI...</span>
+              </div>
+            ) : (
+              !analysisResult && (
+                <button
+                  type="button"
+                  onClick={handleAnalyzeClick}
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/20"
+                >
+                  Analyze Resume
+                </button>
+              )
+            )}
+          </div>
         </div>
+      )}
+
+      {/* Score Card Display (SCRUM-35) */}
+      {analysisResult && (
+        <ScoreCard score={analysisResult.score} feedback={analysisResult.feedback} />
       )}
     </div>
   );
