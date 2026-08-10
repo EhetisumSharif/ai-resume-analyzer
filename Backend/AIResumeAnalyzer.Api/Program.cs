@@ -62,7 +62,7 @@ builder.Services.AddOllamaChatCompletion(modelId, endpoint);
 
 // Services Dependency Injection Registration
 builder.Services.AddScoped<IAiScoringService, AiScoringService>();
-builder.Services.AddScoped<ResumeProcessor>(); // <-- ResumeProcessor সার্ভিসটি এখানে যুক্ত করা হয়েছে
+builder.Services.AddScoped<ResumeProcessor>();
 builder.Services.AddScoped<AiAnalysisService>();
 // ------------------------------------------------------
 
