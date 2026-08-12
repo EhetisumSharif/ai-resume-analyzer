@@ -23,9 +23,13 @@ namespace AIResumeAnalyzer.Api.Services
         {
             var chatService = _kernel.GetRequiredService<IChatCompletionService>();
 
+            // Updated System Prompt supporting SCRUM-36 (4-category feedback) & SCRUM-37 (Missing skills)
             var systemPrompt = @"You are an expert Applicant Tracking System (ATS). 
 Evaluate the resume against the job description.
 Provide an ATS score from 0 to 100 based on exact keyword and skill match.
+
+Detect missing skills/keywords from the job description that are absent in the resume.
+Provide constructive feedback divided strictly into 4 categories: Skills, Content, Structure, and Style.
 
 Output MUST be strictly valid raw JSON with NO markdown tags, backticks, or extra commentary.
 
@@ -34,9 +38,15 @@ JSON Structure:
   ""atsScore"": 85,
   ""summary"": ""Short evaluation summary"",
   ""matchedSkills"": [""Skill1"", ""Skill2""],
-  ""missingSkills"": [""Skill1"", ""Skill2""],
+  ""missingSkills"": [""MissingSkill1"", ""MissingSkill2""],
   ""strengths"": [""Strength1""],
-  ""improvements"": [""Improvement1""]
+  ""improvements"": [""Improvement1""],
+  ""feedback"": {
+    ""skills"": [""Feedback about skills""],
+    ""content"": [""Feedback about content""],
+    ""structure"": [""Feedback about structure""],
+    ""style"": [""Feedback about style""]
+  }
 }";
 
             var userPrompt = $@"
@@ -77,7 +87,7 @@ RESUME:
             }
             catch (Exception)
             {
-                // Clean Fallback: No hardcoded technical skills
+                // Clean Fallback updating the structure safely
                 return new AtsAnalysisResultDto
                 {
                     AtsScore = 0,
@@ -85,7 +95,8 @@ RESUME:
                     MatchedSkills = new List<string>(),
                     MissingSkills = new List<string>(),
                     Strengths = new List<string> { "Raw Response: " + (responseText.Length > 100 ? responseText.Substring(0, 100) + "..." : responseText) },
-                    Improvements = new List<string> { "Ensure Ollama/Llama 3 is properly loaded." }
+                    Improvements = new List<string> { "Ensure Ollama/Llama 3 is properly loaded." },
+                    Feedback = new FeedbackDto()
                 };
             }
         }
