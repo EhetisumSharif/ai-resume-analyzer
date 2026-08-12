@@ -14,6 +14,7 @@ namespace AIResumeAnalyzer.Api.Data
         // Register the new tables for the database
         public DbSet<Resume> Resumes { get; set; }
         public DbSet<Analysis> Analyses { get; set; }
+        public DbSet<JobProfile> JobProfiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
