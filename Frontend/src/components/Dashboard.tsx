@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import FileUpload from './FileUpload';
 import { uploadResume, EvaluationResult } from '../services/resumeService';
+import CategoryFeedback from "./CategoryFeedback";
+import MissingSkillsHighlight from "./MissingSkillsHighlight";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -12,13 +14,11 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [result, setResult] = useState<EvaluationResult | null>(null);
 
-  // File selection handler passed to FileUpload component
   const handleFileSelect = (file: File | null) => {
     setSelectedFile(file);
     setErrorMsg('');
   };
 
-  // Submit & Process via Axios Service
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) {
@@ -30,17 +30,14 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     setErrorMsg('');
 
     try {
-      // Calling Axios Service
       const data = await uploadResume(selectedFile);
       setResult(data);
     } catch (err: any) {
       console.error("Backend Connection Error:", err);
-      
-      // Error Feedback
+
       const message = err.response?.data?.message || 'Failed to connect to backend server.';
       setErrorMsg(`API Warning: ${message}`);
 
-      // Fallback Data for UI testing while backend is offline/developing
       setResult({
         score: 91,
         summary: "Profile data array registers inside top tier percentiles. Layout configuration demonstrates structured semantic taxonomy.",
@@ -49,7 +46,14 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           "Inject precise numerical analytics into historical performance metrics.",
           "Expose relative production hyperlinks within core repository modules.",
           "Strengthen imperative operational verbs across asset descriptions."
-        ]
+        ],
+        categoryScores: [
+          { category: "Skills", score: 88, feedback: "Strong technical stack match with the job description." },
+          { category: "Experience", score: 75, feedback: "Add more quantified achievements to strengthen impact." },
+          { category: "Education", score: 95, feedback: "Education section is well aligned and complete." },
+          { category: "Formatting", score: 82, feedback: "ATS-friendly structure; minor spacing issues detected." }
+        ],
+        missingSkills: ["Docker", "CI/CD", "Unit Testing"]
       });
     } finally {
       setLoading(false);
@@ -58,7 +62,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 font-sans antialiased flex flex-col md:flex-row">
-      
+
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-[#0b0f19] border-b md:border-b-0 md:border-r border-slate-900 flex flex-col justify-between p-6 shrink-0">
         <div className="space-y-8">
@@ -68,7 +72,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             </div>
             <span className="text-sm font-bold tracking-tight text-white">System Panel</span>
           </div>
-          
+
           <nav className="space-y-1">
             <a href="#" className="flex items-center space-x-3 px-3 py-2 bg-slate-900 border border-slate-800 text-indigo-400 rounded-xl text-xs font-semibold tracking-wide">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +83,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </nav>
         </div>
 
-        <button 
+        <button
           onClick={onLogout}
           className="w-full mt-6 py-2.5 bg-slate-900 hover:bg-rose-950/20 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-900/30 rounded-xl text-xs font-semibold tracking-wide transition-all"
         >
@@ -89,7 +93,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
       {/* Main Workspace Frame */}
       <div className="flex-1 flex flex-col min-w-0">
-        
+
         {/* Status Bar */}
         <header className="h-16 bg-[#0b0f19] border-b border-slate-900 px-8 flex items-center justify-between shadow-sm">
           <div className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Analytical Engine</div>
@@ -101,14 +105,14 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
         {/* Dynamic Workspace */}
         <main className="flex-1 p-6 lg:p-10 max-w-6xl w-full mx-auto space-y-8">
-          
+
           <div className="border-b border-slate-900 pb-4">
             <h2 className="text-xl font-bold text-white tracking-tight">ATS Matrix Evaluation</h2>
             <p className="text-xs text-slate-500 mt-1">Expose file layouts to scanning algorithms to trace data structural index ratings.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* Input Form Module */}
             <div className="lg:col-span-5 bg-[#0b0f19] border border-slate-900 p-6 rounded-2xl shadow-xl space-y-6">
               <div>
@@ -117,8 +121,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               </div>
 
               <form onSubmit={handleUpload} className="space-y-4">
-                
-                {/* File Upload Component */}
+
                 <FileUpload onFileSelect={handleFileSelect} />
 
                 {errorMsg && (
@@ -153,7 +156,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
               {result ? (
                 <div className="space-y-5 flex-1">
-                  
+
                   {/* Performance Numeric Block */}
                   <div className="flex items-center space-x-4 p-4 bg-[#030712] border border-slate-800 rounded-xl">
                     <div className="text-2xl font-black text-emerald-400 font-mono tracking-tighter bg-emerald-500/5 px-3 py-1.5 border border-emerald-500/10 rounded-lg">
@@ -198,6 +201,16 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                     </ul>
                   </div>
 
+                  {/* Category Breakdown (SCRUM-38) */}
+                  {result.categoryScores && (
+                    <CategoryFeedback categories={result.categoryScores} />
+                  )}
+
+                  {/* Missing Skills (SCRUM-39) */}
+                  {result.missingSkills && (
+                    <MissingSkillsHighlight missingSkills={result.missingSkills} />
+                  )}
+
                 </div>
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center text-center space-y-3">
@@ -214,7 +227,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           </div>
         </main>
       </div>
-      
+
     </div>
   );
 }

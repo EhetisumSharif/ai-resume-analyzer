@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { CategoryScore } from '../types/resume';
 
 const API_URL = 'http://localhost:5000/api/Resume';
 
@@ -8,6 +9,8 @@ export interface EvaluationResult {
   summary: string;
   keywords: string[];
   improvements: string[];
+  categoryScores?: CategoryScore[];
+  missingSkills?: string[];
 }
 
 export const uploadResume = async (file: File): Promise<EvaluationResult> => {
