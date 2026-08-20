@@ -23,7 +23,7 @@ namespace AIResumeAnalyzer.Api.Controllers
         }
 
         // ==========================================
-        // Build Admin Analytics API
+        // SCRUM-55: Build Admin Analytics API
         // ==========================================
         [HttpGet("analytics")]
         public async Task<IActionResult> GetSystemAnalytics()
@@ -51,7 +51,7 @@ namespace AIResumeAnalyzer.Api.Controllers
                         TotalUsers = totalUsers,
                         TotalResumes = totalResumes,
                         TotalAnalyses = totalAnalyses,
-                        AverageAtsScore = Math.Round(averageScore, 2) // Ekhon ar error dibe na
+                        AverageAtsScore = Math.Round(averageScore, 2)
                     }
                 });
             }
@@ -62,7 +62,36 @@ namespace AIResumeAnalyzer.Api.Controllers
         }
 
         // ==========================================
-        // Build User Management CRUD API
+        // SCRUM-46: DB Cleanup
+        // ==========================================
+        [HttpDelete("cleanup")]
+        public async Task<IActionResult> CleanupDatabase()
+        {
+            try
+            {
+                // 30 diner purano resume jegulor kono analysis nai shegulo khuje ber kora
+                var thirtyDaysAgo = DateTime.UtcNow.AddDays(-30);
+
+                var orphanedResumes = await _context.Resumes
+                    .Where(r => r.UploadedAt < thirtyDaysAgo && !_context.Analyses.Any(a => a.ResumeId == r.Id))
+                    .ToListAsync();
+
+                if (!orphanedResumes.Any())
+                    return Ok(new { message = "Database is clean. No orphaned resumes found." });
+
+                _context.Resumes.RemoveRange(orphanedResumes);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"Cleanup successful. Deleted {orphanedResumes.Count} old unused resumes." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Cleanup failed.", error = ex.Message });
+            }
+        }
+
+        // ==========================================
+        // SCRUM-56: Build User Management CRUD API
         // ==========================================
 
         // 1. READ: Get All Users

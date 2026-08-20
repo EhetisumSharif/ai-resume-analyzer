@@ -33,6 +33,11 @@ namespace AIResumeAnalyzer.Api.Data
                 .WithMany(u => u.Analyses)
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Resume>().HasIndex(r => r.UserId);
+            builder.Entity<Analysis>().HasIndex(a => a.ResumeId);
+            builder.Entity<Analysis>().HasIndex(a => a.UserId);
+            builder.Entity<JobProfile>().HasIndex(j => j.UserId);
         }
     }
 }
