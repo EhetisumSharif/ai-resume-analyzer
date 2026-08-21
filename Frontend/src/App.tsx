@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from './store/authStore';
 import Dashboard from './components/Dashboard';
-import AdminDashboard from './components/AdminDashboard'; // ১. ইমপোর্ট করো
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const { isLoggedIn, currentUser, signUp, signIn, logout } = useAuthStore();
@@ -22,7 +22,7 @@ export default function App() {
 
     if (isSignUpView) {
       if (password !== confirmPassword) {
-        setError("Passwords do not match."); // SRS 1.2
+        setError("Passwords do not match.");
         return;
       }
       const res = signUp({ name, email, password });
@@ -36,12 +36,11 @@ export default function App() {
     } else {
       const res = signIn({ email, password });
       if (!res.success) {
-        setError(res.message); // SRS 1.5
+        setError(res.message);
       }
     }
   };
 
-  // ২. ডাইনামিক রোল বেসড রাউটিং লজিক (SRS 1.6, 1.7, 1.8)
   if (isLoggedIn && currentUser) {
     if (currentUser.role === 'Admin') {
       return <AdminDashboard onLogout={logout} />;
@@ -64,17 +63,14 @@ export default function App() {
           </div>
 
           <div className="space-y-6 relative z-10">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-semibold tracking-wider uppercase">
-              System Node v2.4.0
-            </div>
             <h2 className="text-3xl font-bold text-white tracking-tight leading-tight">
-              Next-Gen Application Parsing Infrastructure.
+              Improve Your Resume with AI
             </h2>
             <p className="text-xs text-slate-400 leading-relaxed max-w-xs">
-              Deconstruct asynchronous applicant documentation down to base token key structures with zero system latency.
+              Upload your resume and get instant feedback to land more interviews.
             </p>
           </div>
-          <div className="text-[10px] tracking-wider text-slate-600 relative z-10 font-mono">SECURE ACCESS PROTOCOL // 2026</div>
+          <div />
         </div>
 
         {/* Right Authentication Form */}
@@ -82,10 +78,10 @@ export default function App() {
           <div className="max-w-md w-full mx-auto">
             <div className="mb-8">
               <h3 className="text-2xl font-bold text-white tracking-tight">
-                {isSignUpView ? "Create Architecture Profile" : "System Authentication"}
+                {isSignUpView ? "Create Your Account" : "Log In"}
               </h3>
               <p className="text-xs text-slate-400 mt-2">
-                {isSignUpView ? "Register structural credentials for access authorization." : "Initialize secure session to access production parsing environments."}
+                {isSignUpView ? "Sign up to get started." : "Log in to check your resume."}
               </p>
             </div>
 
@@ -106,36 +102,36 @@ export default function App() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {isSignUpView && (
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Operator Name</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
                   <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 bg-[#030712] border border-slate-800/80 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" placeholder="Your Name" />
                 </div>
               )}
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Identification Email</label>
+                <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Email</label>
                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-[#030712] border border-slate-800/80 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" placeholder="name@domain.com" />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Access Passkey</label>
+                <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Password</label>
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 bg-[#030712] border border-slate-800/80 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" placeholder="••••••••" />
               </div>
 
               {isSignUpView && (
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Confirm Passkey</label>
+                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Confirm Password</label>
                   <input type="password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-3 bg-[#030712] border border-slate-800/80 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" placeholder="••••••••" />
                 </div>
               )}
 
               <button type="submit" className="w-full mt-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg active:scale-[0.99]">
-                {isSignUpView ? "Execute Profile Registration" : "Establish Secure Connection"}
+                {isSignUpView ? "Create Account" : "Log In"}
               </button>
             </form>
 
             <div className="mt-6 text-center">
               <button type="button" onClick={() => { setIsSignUpView(!isSignUpView); setError(''); setSuccess(''); }} className="text-xs text-slate-400 hover:text-indigo-400 transition-colors font-medium underline underline-offset-4">
-                {isSignUpView ? "Already have an account? Sign In" : "New operator? Create an account"}
+                {isSignUpView ? "Already have an account? Log in" : "New here? Create an account"}
               </button>
             </div>
           </div>

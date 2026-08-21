@@ -72,7 +72,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <div className="h-7 w-7 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <span className="text-white font-bold text-xs">A</span>
             </div>
-            <span className="text-sm font-bold tracking-tight text-white">Root Authority</span>
+            <span className="text-sm font-bold tracking-tight text-white">Admin Panel</span>
           </div>
           
           <nav className="space-y-2">
@@ -80,19 +80,19 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               onClick={() => setActiveTab('console')}
               className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${activeTab === 'console' ? 'bg-slate-900 border border-slate-800 text-indigo-400' : 'text-slate-400 hover:bg-slate-900/40 border border-transparent'}`}
             >
-              <span>Admin Console</span>
+              <span>Users</span>
             </button>
             <button 
               onClick={() => setActiveTab('security')}
               className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${activeTab === 'security' ? 'bg-slate-900 border border-slate-800 text-indigo-400' : 'text-slate-400 hover:bg-slate-900/40 border border-transparent'}`}
             >
-              <span>Security Settings</span>
+              <span>Settings</span>
             </button>
           </nav>
         </div>
         
         <button onClick={onLogout} className="w-full mt-6 py-2.5 bg-slate-900 hover:bg-rose-950/20 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-900/30 rounded-xl text-xs font-semibold tracking-wide transition-all">
-          Terminate Core Session
+          Log Out
         </button>
       </aside>
 
@@ -100,7 +100,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-16 bg-[#0b0f19] border-b border-slate-900 px-8 flex items-center justify-between">
           <div className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
-            Management Node // {activeTab === 'console' ? 'System Control' : 'Credential Workspace'}
+            Admin Panel // {activeTab === 'console' ? 'Users' : 'Settings'}
           </div>
         </header>
 
@@ -111,19 +111,19 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               {/* Statistics Panel */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-[#0b0f19] border border-slate-900 p-5 rounded-2xl">
-                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Total Registered Users</div>
+                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Total Users</div>
                   <div className="text-2xl font-bold text-white mt-2 font-mono">{registeredUsers.length}</div>
                 </div>
                 <div className="bg-[#0b0f19] border border-slate-900 p-5 rounded-2xl">
-                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Total Resumes Analyzed</div>
+                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Resumes Analyzed</div>
                   <div className="text-2xl font-bold text-white mt-2 font-mono">1,424</div>
                 </div>
                 <div className="bg-[#0b0f19] border border-slate-900 p-5 rounded-2xl">
-                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Average ATS Score</div>
+                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Average Score</div>
                   <div className="text-2xl font-bold text-emerald-400 mt-2 font-mono">74.8%</div>
                 </div>
                 <div className="bg-[#0b0f19] border border-slate-900 p-5 rounded-2xl">
-                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Active User Sessions</div>
+                  <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">Active Now</div>
                   <div className="text-2xl font-bold text-indigo-400 mt-2 font-mono">32</div>
                 </div>
               </div>
@@ -132,12 +132,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <div className="bg-[#0b0f19] border border-slate-900 rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-bold text-white">System Operator Matrix</h3>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Search, filter roles, and toggle user environmental clearance states.</p>
+                    <h3 className="text-base font-bold text-white">All Users</h3>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Search users and manage their access.</p>
                   </div>
                   <input 
                     type="text" 
-                    placeholder="Search database nodes..." 
+                    placeholder="Search users..." 
                     value={searchTerm}
                     onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                     className="px-4 py-2 bg-[#030712] border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-indigo-500 w-full sm:w-64 transition-all"
@@ -148,17 +148,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-slate-900 text-[10px] font-bold tracking-wider text-slate-500 uppercase bg-[#0b0f19]/30">
-                        <th className="p-4">Identity Parameters</th>
-                        <th className="p-4">Access Protocol Role</th>
-                        <th className="p-4">Environmental State</th>
-                        <th className="p-4 text-right">System Action</th>
+                        <th className="p-4">Name & Email</th>
+                        <th className="p-4">Role</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4 text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-900/60 text-xs">
                       {currentUsers.map((user) => (
                         <tr key={user.email} className="hover:bg-slate-900/20 transition-colors">
                           <td className="p-4">
-                            <div className="font-semibold text-slate-200">{user.name || 'Anonymous'}</div>
+                            <div className="font-semibold text-slate-200">{user.name || 'No name'}</div>
                             <div className="text-[10px] text-slate-500 mt-0.5 font-mono">{user.email}</div>
                           </td>
                           <td className="p-4 font-mono">
@@ -178,10 +178,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                                 onClick={() => toggleUserStatus(user.email)}
                                 className={`px-3 py-1.5 rounded-lg font-semibold text-[10px] uppercase tracking-wider transition-all border ${user.status === 'Active' ? 'bg-rose-950/20 border-rose-900/30 text-rose-400 hover:bg-rose-900/30' : 'bg-emerald-950/20 border-emerald-900/30 text-emerald-400 hover:bg-emerald-900/30'}`}
                               >
-                                {user.status === 'Active' ? 'Suspend Node' : 'Authorize Node'}
+                                {user.status === 'Active' ? 'Suspend' : 'Activate'}
                               </button>
                             ) : (
-                              <span className="text-[10px] text-slate-600 font-mono italic">Protected Node</span>
+                              <span className="text-[10px] text-slate-600 font-mono italic">Protected</span>
                             )}
                           </td>
                         </tr>
@@ -189,7 +189,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       {currentUsers.length === 0 && (
                         <tr>
                           <td colSpan={4} className="p-8 text-center text-slate-500 font-mono text-[11px]">
-                            No data segments matching query constraints.
+                            No users found.
                           </td>
                         </tr>
                       )}
@@ -215,10 +215,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
               {/* Console System Log Terminal */}
               <div className="bg-[#0b0f19] border border-slate-900 p-6 rounded-2xl shadow-xl space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">System Telemetry Log</h3>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Activity Log</h3>
                 <div className="bg-[#030712] border border-slate-900 p-4 rounded-xl font-mono text-[11px] text-slate-400 space-y-2 h-36 overflow-y-auto">
-                  <p className="text-slate-500">[2026-07-15 14:10:02] <span className="text-emerald-500">INFO</span>: AI Model core infrastructure optimized. Pipeline ready.</p>
-                  <p className="text-slate-500">[2026-07-15 14:10:35] <span className="text-emerald-500">INFO</span>: Secure login session established for application core.</p>
+                  <p className="text-slate-500">[2026-07-15 14:10:02] <span className="text-emerald-500">INFO</span>: AI system is running smoothly.</p>
+                  <p className="text-slate-500">[2026-07-15 14:10:35] <span className="text-emerald-500">INFO</span>: A user logged in successfully.</p>
                 </div>
               </div>
             </>
@@ -226,8 +226,8 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             /* Settings Management Panel */
             <div className="bg-[#0b0f19] border border-slate-900 rounded-2xl shadow-xl p-6 max-w-xl">
               <div className="mb-6">
-                <h3 className="text-base font-bold text-white">Security Settings</h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">Modify root authorization email structure and primary access passkey.</p>
+                <h3 className="text-base font-bold text-white">Settings</h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">Update your admin email and password.</p>
               </div>
 
               {secError && (
@@ -239,7 +239,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
               <form onSubmit={handleSecurityUpdate} className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Authority Email</label>
+                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Email</label>
                   <input 
                     type="email" 
                     required 
@@ -249,7 +249,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">New Security Passkey</label>
+                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">New Password</label>
                   <input 
                     type="password" 
                     required 
@@ -260,18 +260,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Confirm New Passkey</label>
+                  <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Confirm New Password</label>
                   <input 
                     type="password" 
                     required 
-                    placeholder="Repeat new passkey"
+                    placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full px-4 py-2.5 bg-[#030712] border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-all"
                   />
                 </div>
                 <button type="submit" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs uppercase tracking-wider rounded-xl transition-all">
-                  Commit Security Changes
+                  Save Changes
                 </button>
               </form>
             </div>

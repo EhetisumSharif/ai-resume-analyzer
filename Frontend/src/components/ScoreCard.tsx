@@ -12,7 +12,7 @@ export default function ScoreCard({ score, feedback }: ScoreCardProps) {
       <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
         <div>
           <h3 className="text-lg font-bold text-slate-100">Resume Score</h3>
-          <p className="text-xs text-slate-400">AI Evaluation & Feedback</p>
+          <p className="text-xs text-slate-400">Here's how your resume did</p>
         </div>
         <div className="flex items-baseline space-x-1">
           <span className="text-3xl font-extrabold text-indigo-400">{score}</span>
@@ -32,7 +32,7 @@ export default function ScoreCard({ score, feedback }: ScoreCardProps) {
 
       {/* Feedback List */}
       <div className="space-y-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Key AI Feedback</h4>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What We Found</h4>
         <ul className="space-y-2">
           {feedback.map((item, index) => (
             <li key={index} className="flex items-start space-x-2 text-sm text-slate-300">

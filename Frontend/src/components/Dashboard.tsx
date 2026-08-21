@@ -3,6 +3,8 @@ import FileUpload from './FileUpload';
 import { uploadResume, EvaluationResult } from '../services/resumeService';
 import CategoryFeedback from "./CategoryFeedback";
 import MissingSkillsHighlight from "./MissingSkillsHighlight";
+import SideBySideReview from "./SideBySideReview";
+import ProgressChart, { ScoreEntry } from "./ProgressChart";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -13,10 +15,20 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [result, setResult] = useState<EvaluationResult | null>(null);
+  const [originalText, setOriginalText] = useState<string>('');
+  const [scoreHistory, setScoreHistory] = useState<ScoreEntry[]>([]);
 
   const handleFileSelect = (file: File | null) => {
     setSelectedFile(file);
     setErrorMsg('');
+  };
+
+  const addScoreToHistory = (score: number) => {
+    const today = new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+    setScoreHistory((prev) => [...prev, { date: today, score }]);
   };
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -28,33 +40,38 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
     setLoading(true);
     setErrorMsg('');
+    setOriginalText(`Uploaded file: ${selectedFile.name}`);
 
     try {
       const data = await uploadResume(selectedFile);
       setResult(data);
+      addScoreToHistory(data.score);
     } catch (err: any) {
       console.error("Backend Connection Error:", err);
 
-      const message = err.response?.data?.message || 'Failed to connect to backend server.';
-      setErrorMsg(`API Warning: ${message}`);
+      const message = err.response?.data?.message || 'Could not connect to the server. Please try again.';
+      setErrorMsg(message);
 
-      setResult({
+      const fallbackResult: EvaluationResult = {
         score: 91,
-        summary: "Profile data array registers inside top tier percentiles. Layout configuration demonstrates structured semantic taxonomy.",
+        summary: "Your resume matches most of what employers look for. The layout is clean and easy to read.",
         keywords: ["React.js", "TypeScript", "Tailwind CSS", "RESTful Core API", "ASP.NET Core", "Git"],
         improvements: [
-          "Inject precise numerical analytics into historical performance metrics.",
-          "Expose relative production hyperlinks within core repository modules.",
-          "Strengthen imperative operational verbs across asset descriptions."
+          "Add real numbers to show your results (e.g. increased sales by 20%).",
+          "Add links to your projects so employers can see your work.",
+          "Use stronger action words like 'led', 'built', or 'launched'."
         ],
         categoryScores: [
-          { category: "Skills", score: 88, feedback: "Strong technical stack match with the job description." },
-          { category: "Experience", score: 75, feedback: "Add more quantified achievements to strengthen impact." },
-          { category: "Education", score: 95, feedback: "Education section is well aligned and complete." },
-          { category: "Formatting", score: 82, feedback: "ATS-friendly structure; minor spacing issues detected." }
+          { category: "Skills", score: 88, feedback: "Your skills match the job well." },
+          { category: "Experience", score: 75, feedback: "Add more numbers to show your impact." },
+          { category: "Education", score: 95, feedback: "Your education section is complete." },
+          { category: "Formatting", score: 82, feedback: "Easy to read, just a few small spacing fixes needed." }
         ],
         missingSkills: ["Docker", "CI/CD", "Unit Testing"]
-      });
+      };
+
+      setResult(fallbackResult);
+      addScoreToHistory(fallbackResult.score);
     } finally {
       setLoading(false);
     }
@@ -70,7 +87,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             <div className="h-7 w-7 bg-indigo-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">R</span>
             </div>
-            <span className="text-sm font-bold tracking-tight text-white">System Panel</span>
+            <span className="text-sm font-bold tracking-tight text-white">Dashboard</span>
           </div>
 
           <nav className="space-y-1">
@@ -78,7 +95,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"/>
               </svg>
-              <span>Parser Terminal</span>
+              <span>Resume Checker</span>
             </a>
           </nav>
         </div>
@@ -87,7 +104,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           onClick={onLogout}
           className="w-full mt-6 py-2.5 bg-slate-900 hover:bg-rose-950/20 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-900/30 rounded-xl text-xs font-semibold tracking-wide transition-all"
         >
-          Disconnect Stream
+          Log Out
         </button>
       </aside>
 
@@ -96,10 +113,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
         {/* Status Bar */}
         <header className="h-16 bg-[#0b0f19] border-b border-slate-900 px-8 flex items-center justify-between shadow-sm">
-          <div className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Analytical Engine</div>
+          <div className="text-xs font-semibold tracking-wider text-slate-400 uppercase">Dashboard</div>
           <div className="flex items-center space-x-2 bg-emerald-500/5 border border-emerald-500/20 px-3 py-1 rounded-full">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] text-emerald-400 font-mono font-bold uppercase tracking-wider">Node Active</span>
+            <span className="text-[10px] text-emerald-400 font-mono font-bold uppercase tracking-wider">Online</span>
           </div>
         </header>
 
@@ -107,8 +124,8 @@ export default function Dashboard({ onLogout }: DashboardProps) {
         <main className="flex-1 p-6 lg:p-10 max-w-6xl w-full mx-auto space-y-8">
 
           <div className="border-b border-slate-900 pb-4">
-            <h2 className="text-xl font-bold text-white tracking-tight">ATS Matrix Evaluation</h2>
-            <p className="text-xs text-slate-500 mt-1">Expose file layouts to scanning algorithms to trace data structural index ratings.</p>
+            <h2 className="text-xl font-bold text-white tracking-tight">Resume Checker</h2>
+            <p className="text-xs text-slate-500 mt-1">Upload your resume and get an instant score with tips to improve it.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -116,8 +133,8 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             {/* Input Form Module */}
             <div className="lg:col-span-5 bg-[#0b0f19] border border-slate-900 p-6 rounded-2xl shadow-xl space-y-6">
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">File Ingestion</h3>
-                <p className="text-[11px] text-slate-500 mt-1">Direct verification mapping for pipeline records.</p>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">Upload Resume</h3>
+                <p className="text-[11px] text-slate-500 mt-1">Add your resume file to get started.</p>
               </div>
 
               <form onSubmit={handleUpload} className="space-y-4">
@@ -141,18 +158,20 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      <span>Analyzing Document...</span>
+                      <span>Analyzing...</span>
                     </span>
                   ) : (
-                    "Initialize Verification"
+                    "Analyze Resume"
                   )}
                 </button>
               </form>
+
+              <ProgressChart history={scoreHistory} />
             </div>
 
             {/* Results Terminal Block */}
             <div className="lg:col-span-7 bg-[#0b0f19] border border-slate-900 p-6 rounded-2xl shadow-xl min-h-[360px] flex flex-col">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 border-b border-slate-900 pb-3">Operational Log</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 border-b border-slate-900 pb-3">Your Results</h3>
 
               {result ? (
                 <div className="space-y-5 flex-1">
@@ -163,22 +182,20 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                       {result.score}%
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white uppercase tracking-wide">Compliance Index Matching</div>
-                      <div className="text-[10px] text-slate-500 mt-0.5">Structure registers within optimal operating metrics.</div>
+                      <div className="text-xs font-bold text-white uppercase tracking-wide">Overall Match Score</div>
+                      <div className="text-[10px] text-slate-500 mt-0.5">Your resume looks strong overall.</div>
                     </div>
                   </div>
 
-                  {/* Text Summary */}
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">Telemetry Feedback</span>
-                    <p className="text-xs text-slate-300 leading-relaxed bg-[#030712]/50 p-3 rounded-lg border border-slate-800/60">
-                      {result.summary}
-                    </p>
-                  </div>
+                  {/* Side-by-side review */}
+                  <SideBySideReview
+                    originalText={originalText}
+                    feedbackText={result.summary}
+                  />
 
                   {/* Token Tags */}
                   <div className="space-y-2">
-                    <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">Identified Assets</span>
+                    <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">Your Skills</span>
                     <div className="flex flex-wrap gap-1.5">
                       {result.keywords.map((kw, i) => (
                         <span key={i} className="px-2.5 py-1 bg-slate-900 border border-slate-800 text-slate-300 text-[10px] font-mono rounded-md">
@@ -190,7 +207,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
                   {/* Refactor List */}
                   <div className="space-y-2 pt-1">
-                    <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">Optimization Sequence</span>
+                    <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">Ways to Improve</span>
                     <ul className="space-y-2">
                       {result.improvements.map((imp, i) => (
                         <li key={i} className="flex items-start text-xs text-slate-400 space-x-2">
@@ -201,12 +218,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                     </ul>
                   </div>
 
-                  {/* Category Breakdown (SCRUM-38) */}
                   {result.categoryScores && (
                     <CategoryFeedback categories={result.categoryScores} />
                   )}
 
-                  {/* Missing Skills (SCRUM-39) */}
                   {result.missingSkills && (
                     <MissingSkillsHighlight missingSkills={result.missingSkills} />
                   )}
@@ -219,7 +234,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"/>
                     </svg>
                   </div>
-                  <p className="text-xs text-slate-600 max-w-xs font-mono">SYSTEM AWAITING DOCUMENT FEED VARIABLE...</p>
+                  <p className="text-xs text-slate-600 max-w-xs">Upload a resume to see your results</p>
                 </div>
               )}
             </div>

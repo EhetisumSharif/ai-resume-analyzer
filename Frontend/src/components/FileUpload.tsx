@@ -24,12 +24,12 @@ export default function FileUpload({ onFileSelect, onAnalyze }: FileUploadProps)
     
     const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
-      setErrorMsg('Invalid format. Please upload PDF or DOCX files.');
+      setErrorMsg('Please upload a PDF or DOCX file.');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrorMsg('File size exceeds 5MB threshold.');
+      setErrorMsg('File is too large. Max size is 5MB.');
       return;
     }
 
@@ -182,7 +182,7 @@ export default function FileUpload({ onFileSelect, onAnalyze }: FileUploadProps)
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span className="text-sm font-medium text-indigo-300">Analyzing Resume with AI...</span>
+                <span className="text-sm font-medium text-indigo-300">Analyzing your resume...</span>
               </div>
             ) : (
               !analysisResult && (
@@ -205,4 +205,4 @@ export default function FileUpload({ onFileSelect, onAnalyze }: FileUploadProps)
       )}
     </div>
   );
-}
+} 
