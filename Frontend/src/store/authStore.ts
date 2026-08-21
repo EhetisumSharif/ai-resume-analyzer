@@ -30,7 +30,8 @@ const getStoredUsers = (): User[] => {
     localStorage.setItem('app_users', JSON.stringify(defaultUsers));
     return defaultUsers;
   }
-  return JSON.parse(stored);
+  // JSON.parse-এর পর explicit cast করা হয়েছে
+  return JSON.parse(stored) as User[];
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -43,15 +44,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const userExists = registeredUsers.some((u) => u.email === newUser.email);
     
     if (userExists) {
-      return { success: false, message: "Identity record already registered." };
+      return { success: false, message: "This email is already registered." };
     }
 
     const createdUser: User = { ...newUser, role: 'User', status: 'Active' };
-    const updatedUsers = [...registeredUsers, createdUser];
+    const updatedUsers: User[] = [...registeredUsers, createdUser];
     localStorage.setItem('app_users', JSON.stringify(updatedUsers));
     
     set({ registeredUsers: updatedUsers });
-    return { success: true, message: "Profile registered successfully. Proceed to login." };
+    return { success: true, message: "Account created! You can now log in." };
   },
 
   signIn: (credentials) => {
@@ -61,22 +62,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     );
 
     if (!user) {
-      return { success: false, message: "Invalid email or password." };
+      return { success: false, message: "Incorrect email or password." };
     }
 
     if (user.status === 'Banned') {
-      return { success: false, message: "Access denied. This profile environment is currently suspended." };
+      return { success: false, message: "Your account has been suspended." };
     }
 
     set({ isLoggedIn: true, currentUser: user, registeredUsers: currentDatabase });
-    return { success: true, message: "Authentication verified." };
+    return { success: true, message: "Login successful." };
   },
 
   toggleUserStatus: (email) => {
     const { registeredUsers } = get();
-    const updated = registeredUsers.map((user) => {
+    const updated: User[] = registeredUsers.map((user) => {
       if (user.email === email && user.role !== 'Admin') {
-        return { ...user, status: user.status === 'Active' ? 'Banned' : ('Active' as const) };
+        const newStatus: 'Active' | 'Banned' = user.status === 'Active' ? 'Banned' : 'Active';
+        return { ...user, status: newStatus };
       }
       return user;
     });
@@ -87,15 +89,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   updateAdminCredentials: (newEmail, newPassword) => {
     const { registeredUsers, currentUser } = get();
     if (!currentUser || currentUser.role !== 'Admin') {
-      return { success: false, message: "Unauthorized action." };
+      return { success: false, message: "You don't have permission to do this." };
     }
 
     const emailExists = registeredUsers.some((u) => u.email === newEmail && u.role !== 'Admin');
     if (emailExists) {
-      return { success: false, message: "Target email is already claimed by another node." };
+      return { success: false, message: "This email is already in use." };
     }
 
-    const updatedUsers = registeredUsers.map((user) => {
+    const updatedUsers: User[] = registeredUsers.map((user) => {
       if (user.role === 'Admin') {
         return { ...user, email: newEmail, password: newPassword };
       }
@@ -107,7 +109,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const updatedAdmin: User = { ...currentUser, email: newEmail, password: newPassword };
     set({ registeredUsers: updatedUsers, currentUser: updatedAdmin });
     
-    return { success: true, message: "Security credentials updated successfully." };
+    return { success: true, message: "Your login details have been updated." };
   },
 
   logout: () => set({ isLoggedIn: false, currentUser: null }),

@@ -6,31 +6,18 @@ export default function MissingSkillsHighlight({ missingSkills }: MissingSkillsH
   if (!missingSkills || missingSkills.length === 0) return null;
 
   return (
-    <div
-      style={{
-        marginTop: "24px",
-        border: "1px solid #fecaca",
-        background: "#fef2f2",
-        borderRadius: "12px",
-        padding: "16px",
-      }}
-    >
-      <h4 style={{ margin: 0, color: "#b91c1c" }}>⚠ Missing Skills</h4>
-      <p style={{ fontSize: "13px", color: "#7f1d1d", marginTop: "4px" }}>
-        
+    <div className="mt-2 border border-rose-900/30 bg-rose-950/20 rounded-xl p-4">
+      <h4 className="m-0 text-xs font-bold text-rose-400 flex items-center gap-1.5">
+        ⚠ Missing Skills
+      </h4>
+      <p className="text-[11px] text-rose-300/70 mt-1">
+        Consider adding these skills to strengthen your resume.
       </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "10px" }}>
+      <div className="flex flex-wrap gap-2 mt-2.5">
         {missingSkills.map((skill) => (
           <span
             key={skill}
-            style={{
-              background: "#fee2e2",
-              color: "#b91c1c",
-              padding: "4px 10px",
-              borderRadius: "999px",
-              fontSize: "13px",
-              fontWeight: 500,
-            }}
+            className="bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded-full text-[11px] font-medium border border-rose-500/20"
           >
             {skill}
           </span>

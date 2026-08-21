@@ -5,48 +5,32 @@ interface CategoryFeedbackProps {
 }
 
 const getColor = (score: number) => {
-  if (score >= 80) return "#22c55e";
-  if (score >= 50) return "#f59e0b";
-  return "#ef4444";
+  if (score >= 80) return "#34d399"; // emerald-400
+  if (score >= 50) return "#fbbf24"; // amber-400
+  return "#f87171"; // rose-400
 };
 
 export default function CategoryFeedback({ categories }: CategoryFeedbackProps) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "24px" }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
       {categories.map((cat) => (
         <div
           key={cat.category}
-          style={{
-            border: "1px solid #e5e7eb",
-            borderRadius: "12px",
-            padding: "16px",
-            background: "#fff",
-          }}
+          className="border border-slate-800 rounded-xl p-4 bg-[#030712]/50"
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h4 style={{ margin: 0 }}>{cat.category}</h4>
-            <span style={{ color: getColor(cat.score), fontWeight: 700 }}>
+          <div className="flex justify-between items-center">
+            <h4 className="text-xs font-bold text-slate-200 m-0">{cat.category}</h4>
+            <span style={{ color: getColor(cat.score) }} className="text-xs font-bold">
               {cat.score}/100
             </span>
           </div>
-          <div
-            style={{
-              height: "6px",
-              background: "#f3f4f6",
-              borderRadius: "4px",
-              marginTop: "8px",
-              overflow: "hidden",
-            }}
-          >
+          <div className="h-1.5 bg-slate-900 rounded-full mt-2 overflow-hidden">
             <div
-              style={{
-                width: `${cat.score}%`,
-                height: "100%",
-                background: getColor(cat.score),
-              }}
+              style={{ width: `${cat.score}%`, background: getColor(cat.score) }}
+              className="h-full rounded-full transition-all duration-500"
             />
           </div>
-          <p style={{ marginTop: "10px", fontSize: "14px", color: "#4b5563" }}>
+          <p className="mt-2.5 text-xs text-slate-400 leading-relaxed">
             {cat.feedback}
           </p>
         </div>
