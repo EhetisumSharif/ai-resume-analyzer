@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { CategoryScore } from '../types/resume';
 
-const API_URL = 'http://localhost:5000/api/Resume';
+const API_URL = 'http://localhost:5293/api/Resume';
 
 // Response Type Definition
 export interface EvaluationResult {
@@ -17,13 +17,19 @@ export const uploadResume = async (file: File): Promise<EvaluationResult> => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const token = localStorage.getItem('token');
+  // localStorage অথবা authStore থেকে টোকেন নেওয়া
+  const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'multipart/form-data',
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await axios.post<EvaluationResult>(`${API_URL}/upload`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
+    headers,
   });
 
   return response.data;
