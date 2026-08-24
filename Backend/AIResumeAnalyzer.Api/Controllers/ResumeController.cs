@@ -62,12 +62,12 @@ namespace AIResumeAnalyzer.Api.Controllers
                 string? extractedText = null;
                 string? previewUrl = null;
 
-                // 🚀 MASTER FIX: Convert file to byte array once!
+                // Convert file to byte array once
                 byte[] fileBytes;
                 using (var ms = new MemoryStream())
                 {
                     await file.CopyToAsync(ms);
-                    fileBytes = ms.ToArray(); // Save in memory
+                    fileBytes = ms.ToArray();
                 }
 
                 // 1. Save physical file using the byte array
@@ -79,21 +79,19 @@ namespace AIResumeAnalyzer.Api.Controllers
                 // 2. Process PDF Specifically
                 if (extension == ".pdf")
                 {
-                    // Create a FRESH stream just for Text Extraction
                     using (var pdfStreamForText = new MemoryStream(fileBytes))
                     {
                         extractedText = _resumeProcessor.ExtractTextFromPdf(pdfStreamForText);
-                    } // iTextSharp closes this stream? No problem!
+                    }
 
-                    // Create another FRESH stream just for Image Generation
                     using (var pdfStreamForImage = new MemoryStream(fileBytes))
                     {
                         _resumeProcessor.GeneratePreviewImage(pdfStreamForImage, previewsFolder, resumeId.ToString());
                         previewUrl = $"/uploads/previews/{resumeId}_preview.png";
-                    } // ImageMagick closes this one? Also fine!
+                    }
                 }
 
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "test-user-id";
 
                 var resume = new Resume
                 {
@@ -109,11 +107,18 @@ namespace AIResumeAnalyzer.Api.Controllers
                 _context.Resumes.Add(resume);
                 await _context.SaveChangesAsync();
 
-                // 3. Auto AI Analysis Logic
+                // 3. Safe AI Analysis Logic with Exception Handlers
                 AtsAnalysisResultDto? aiAnalysis = null;
                 if (!string.IsNullOrWhiteSpace(extractedText) && !string.IsNullOrWhiteSpace(jobDescription))
                 {
-                    aiAnalysis = await _aiScoringService.EvaluateResumeAsync(extractedText, jobDescription);
+                    try
+                    {
+                        aiAnalysis = await _aiScoringService.EvaluateResumeAsync(extractedText, jobDescription);
+                    }
+                    catch (Exception aiEx)
+                    {
+                        Console.WriteLine($"AI Evaluation skipped due to timeout/error: {aiEx.Message}");
+                    }
                 }
 
                 return Ok(new
