@@ -2,17 +2,18 @@
   font-size: 16px;
   padding: 5px 10px;
   border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
+  color: var(--accent, #059669);
+  background: var(--accent-bg, #ecfdf5);
   border: 2px solid transparent;
   transition: border-color 0.3s;
   margin-bottom: 24px;
 
   &:hover {
-    border-color: var(--accent-border);
+    border-color: var(--accent-border, #10b981);
   }
+
   &:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--accent, #059669);
     outline-offset: 2px;
   }
 }
@@ -42,8 +43,7 @@
     z-index: 1;
     top: 34px;
     height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
+    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg) scale(1.4);
   }
 
   .vite {
@@ -51,8 +51,7 @@
     top: 107px;
     height: 26px;
     width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
+    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg) scale(0.8);
   }
 }
 
@@ -72,12 +71,13 @@
 
 #next-steps {
   display: flex;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border, #e2e8f0);
   text-align: left;
 
-  & > div {
+  &>div {
     flex: 1 1 0;
     padding: 32px;
+
     @media (max-width: 1024px) {
       padding: 24px 20px;
     }
@@ -96,11 +96,11 @@
 }
 
 #docs {
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--border, #e2e8f0);
 
   @media (max-width: 1024px) {
     border-right: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border, #e2e8f0);
   }
 }
 
@@ -116,20 +116,24 @@
   }
 
   a {
-    color: var(--text-h);
+    color: var(--text-h, #0f172a);
     font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
+    border-radius: 8px;
+    background: var(--social-bg, #f8fafc);
+    border: 1px solid var(--border, #e2e8f0);
     display: flex;
     padding: 6px 12px;
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    transition: box-shadow 0.3s;
+    transition: all 0.3s;
 
     &:hover {
-      box-shadow: var(--shadow);
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      box-shadow: var(--shadow, 0 4px 6px -1px rgba(16, 185, 129, 0.1));
     }
+
     .button-icon {
       height: 18px;
       width: 18px;
@@ -155,7 +159,8 @@
 
 #spacer {
   height: 88px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border, #e2e8f0);
+
   @media (max-width: 1024px) {
     height: 48px;
   }
@@ -175,10 +180,11 @@
 
   &::before {
     left: 0;
-    border-left-color: var(--border);
+    border-left-color: var(--border, #e2e8f0);
   }
+
   &::after {
     right: 0;
-    border-right-color: var(--border);
+    border-right-color: var(--border, #e2e8f0);
   }
 }
