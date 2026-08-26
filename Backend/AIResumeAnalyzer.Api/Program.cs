@@ -78,10 +78,9 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-// --- Updated SwaggerGen with JWT Support (Authorize Button) ---
+// --- SwaggerGen with JWT Support ---
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AIResumeAnalyzer.Api", Version = "v1" });
@@ -95,7 +94,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -123,12 +122,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
-// --- HTTP Pipeline Order (CRITICAL) ---
-app.UseCors("AllowAll");       // 1. Enable CORS first to authorize incoming origins
-app.UseAuthentication();     // 2. Identify who the user is via Identity/JWT Token
-app.UseAuthorization();      // 3. Evaluate operational access control
+// app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

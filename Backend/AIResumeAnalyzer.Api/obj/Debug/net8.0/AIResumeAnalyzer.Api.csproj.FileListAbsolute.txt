@@ -27,7 +27,6 @@ C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnaly
 C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\AIResume.99641BE5.Up2Date
 C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\AIResumeAnalyzer.Api.dll
 C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\refint\AIResumeAnalyzer.Api.dll
@@ -412,3 +411,4 @@ C:\Users\Rafiq's PC\source\repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api
 C:\Users\Rafiq's PC\source\repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\bin\Debug\net8.0\System.Threading.Channels.dll
 C:\Users\Rafiq's PC\source\repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\Rafiq's PC\Source\Repos\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\hp\source\repos\EhetisumSharif\ai-resume-analyzer\Backend\AIResumeAnalyzer.Api\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
