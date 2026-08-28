@@ -20,24 +20,18 @@ export default function FileUpload({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleAnalyzeClick = () => {
-    if (onAnalyze) {
-      onAnalyze();
-    }
-  };
-
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
     const file = files[0];
 
     const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
-      setErrorMsg('Please upload a PDF or DOCX file.');
+      setErrorMsg('Please upload a valid PDF or DOCX file.');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrorMsg('File is too large. Max size is 5MB.');
+      setErrorMsg('File is too large. Max size limit is 5MB.');
       return;
     }
 
@@ -92,9 +86,9 @@ export default function FileUpload({
           onDragOver={handleDrag}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 ${dragActive
-            ? 'border-emerald-500 bg-emerald-50/60'
-            : 'border-slate-200 hover:border-emerald-400 bg-slate-50/50 hover:bg-emerald-50/30'
+          className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 ${dragActive
+              ? 'border-emerald-400 bg-emerald-500/10 shadow-lg shadow-emerald-500/20'
+              : 'border-slate-700 hover:border-emerald-500/60 bg-slate-950/40 hover:bg-slate-950/70'
             }`}
         >
           <input
@@ -106,23 +100,23 @@ export default function FileUpload({
           />
 
           <div className="flex flex-col items-center justify-center space-y-3">
-            <div className="h-12 w-12 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-sm">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-inner group-hover:scale-110 transition-transform">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-800">
-                Drag & drop your resume or <span className="text-emerald-600 hover:underline">browse</span>
+              <p className="text-xs font-bold text-slate-200">
+                Drag & drop your resume or <span className="text-emerald-400 underline decoration-emerald-500/40">browse files</span>
               </p>
-              <p className="text-[11px] text-slate-400 mt-1">Supports PDF, DOCX (Max 5MB)</p>
+              <p className="text-[10px] text-slate-400 mt-1">Supports PDF, DOCX formats (Max size: 5MB)</p>
             </div>
           </div>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-xl font-medium">
+        <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs rounded-xl font-medium animate-shake">
           {errorMsg}
         </div>
       )}
@@ -130,20 +124,20 @@ export default function FileUpload({
       {/* Selected File Box & Preview */}
       {selectedFile && (
         <div className="space-y-3">
-          <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-sm">
+          <div className="bg-slate-950/60 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-inner">
             <div className="flex items-center space-x-3 min-w-0">
-              <div className="h-9 w-9 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-emerald-600 font-mono text-xs uppercase shrink-0 font-bold shadow-xs">
+              <div className="h-10 w-10 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400 font-mono text-xs uppercase shrink-0 font-black shadow-sm">
                 {selectedFile.name.split('.').pop()}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-slate-800 truncate">{selectedFile.name}</p>
+                <p className="text-xs font-bold text-white truncate">{selectedFile.name}</p>
                 <p className="text-[10px] text-slate-400 font-mono">{(selectedFile.size / 1024).toFixed(1)} KB</p>
               </div>
             </div>
             <button
               type="button"
               onClick={removeFile}
-              className="text-slate-400 hover:text-rose-600 p-1 text-xs transition-colors"
+              className="text-slate-400 hover:text-rose-400 p-2 text-xs transition-colors bg-slate-900 rounded-xl border border-slate-800 cursor-pointer"
             >
               ✕
             </button>
@@ -151,35 +145,12 @@ export default function FileUpload({
 
           {/* Document Preview Embed */}
           {previewUrl && (
-            <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 p-2 shadow-xs">
-              <iframe src={previewUrl} className="w-full h-64 rounded-lg bg-white" title="Resume Preview" />
+            <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-950/80 p-2 shadow-inner">
+              <iframe src={previewUrl} className="w-full h-56 rounded-xl bg-slate-900 border border-slate-800" title="Resume Preview" />
             </div>
           )}
-
-          {/* Action Button / Loading State (SCRUM-34) */}
-          <div className="pt-2">
-            {isLoading ? (
-              <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center space-x-3">
-                <svg className="animate-spin h-5 w-5 text-indigo-400" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span className="text-sm font-medium text-indigo-300">Analyzing Resume with AI...</span>
-              </div>
-            ) : (
-              !analysisResult && (
-                <button
-                  type="button"
-                  onClick={handleAnalyzeClick}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/20"
-                >
-                  Analyze Resume
-                </button>
-              )
-            )}
-          </div>
         </div>
       )}
     </div>
   );
-} 
+}

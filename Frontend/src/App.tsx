@@ -53,55 +53,64 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-emerald-50/40 text-slate-800 font-sans antialiased flex items-center justify-center p-0 md:p-6">
-      <div className="w-full max-w-5xl bg-white rounded-none md:rounded-3xl shadow-2xl border-0 md:border border-emerald-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[650px]">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-emerald-950 text-slate-100 font-sans antialiased flex items-center justify-center p-0 md:p-6 relative overflow-hidden">
 
-        {/* Left Panel - Greenish Gradient Branding */}
-        <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-emerald-900 via-emerald-800 to-slate-900 text-white relative border-r border-emerald-100">
+      {/* Background Decorative Glow Elements */}
+      <div className="absolute top-10 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="w-full max-w-5xl bg-slate-900/80 backdrop-blur-2xl rounded-none md:rounded-3xl shadow-2xl border-0 md:border border-slate-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[680px] z-10">
+
+        {/* Left Panel - Deep Dark Branding */}
+        <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-12 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 text-white relative border-r border-slate-800/80">
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
+
           <div className="flex items-center space-x-3 relative z-10">
-            <div className="h-8 w-8 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            <div className="h-10 w-10 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <span className="text-white font-black text-lg">R</span>
             </div>
-            <span className="text-base font-bold tracking-tight text-white">ResumeAI Pro</span>
+            <span className="text-sm font-extrabold tracking-tight text-white">ResumeAI <span className="text-emerald-400">Pro</span></span>
           </div>
 
           <div className="space-y-6 relative z-10">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-semibold tracking-wider uppercase">
-              AI Powered Intelligence
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-black tracking-widest uppercase">
+              <span>✨ AI Powered Intelligence</span>
             </div>
-            <h2 className="text-3xl font-bold text-white tracking-tight leading-tight">
+            <h2 className="text-3xl font-black text-white tracking-tight leading-tight">
               Smart Resume Analysis & Matching.
             </h2>
-            <p className="text-xs text-emerald-100/80 leading-relaxed max-w-xs">
+            <p className="text-xs text-slate-300 leading-relaxed max-w-xs">
               Evaluate resumes against target job descriptions instantly with precision AI insights and modern scoring metrics.
             </p>
           </div>
-          <div className="text-[10px] tracking-wider text-emerald-300/60 relative z-10 font-mono">SECURE AUTHENTICATION // 2026</div>
+
+          <div className="text-[10px] tracking-widest text-slate-500 relative z-10 font-mono">
+            SECURE AUTHENTICATION // 2026
+          </div>
         </div>
 
         {/* Right Authentication Form */}
-        <div className="col-span-1 lg:col-span-7 p-8 md:p-16 flex flex-col justify-center bg-white">
+        <div className="col-span-1 lg:col-span-7 p-8 md:p-16 flex flex-col justify-center bg-slate-900/50 backdrop-blur-md">
           <div className="max-w-md w-full mx-auto">
             <div className="mb-8">
-              <h3 className="text-2xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-2xl font-black text-white tracking-tight">
                 {isSignUpView ? "Create Account" : "Welcome Back"}
               </h3>
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs text-slate-400 mt-2">
                 {isSignUpView ? "Register your details to start analyzing resumes." : "Sign in to access your evaluation dashboard."}
               </p>
             </div>
 
             {error && (
-              <div className="mb-5 p-3.5 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-xl flex items-center space-x-2 font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+              <div className="mb-5 p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs rounded-2xl flex items-center space-x-2 font-medium">
+                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
                 <span>{error}</span>
               </div>
             )}
 
             {success && (
-              <div className="mb-5 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-xl flex items-center space-x-2 font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="mb-5 p-3.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs rounded-2xl flex items-center space-x-2 font-medium">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>{success}</span>
               </div>
             )}
@@ -109,35 +118,70 @@ export default function App() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {isSignUpView && (
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Full Name</label>
-                  <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 bg-emerald-50/30 border border-emerald-200/60 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all" placeholder="Your Name" />
+                  <label className="block text-[11px] font-black text-slate-300 uppercase tracking-wider mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-inner"
+                    placeholder="Ehetisum Sharif"
+                  />
                 </div>
               )}
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-emerald-50/30 border border-emerald-200/60 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all" placeholder="name@domain.com" />
+                <label className="block text-[11px] font-black text-slate-300 uppercase tracking-wider mb-2">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-inner"
+                  placeholder="name@domain.com"
+                />
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
-                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 bg-emerald-50/30 border border-emerald-200/60 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all" placeholder="••••••••" />
+                <label className="block text-[11px] font-black text-slate-300 uppercase tracking-wider mb-2">Password</label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-inner"
+                  placeholder="••••••••"
+                />
               </div>
 
               {isSignUpView && (
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Confirm Password</label>
-                  <input type="password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-4 py-3 bg-emerald-50/30 border border-emerald-200/60 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15 transition-all" placeholder="••••••••" />
+                  <label className="block text-[11px] font-black text-slate-300 uppercase tracking-wider mb-2">Confirm Password</label>
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all shadow-inner"
+                    placeholder="••••••••"
+                  />
                 </div>
               )}
 
-              <button type="submit" className="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-[0.99] cursor-pointer">
+              <button
+                type="submit"
+                className="w-full mt-4 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-emerald-600/30 active:scale-[0.98] cursor-pointer"
+              >
                 {isSignUpView ? "Create Account" : "Sign In"}
               </button>
             </form>
 
             <div className="mt-6 text-center">
-              <button type="button" onClick={() => { setIsSignUpView(!isSignUpView); setError(''); setSuccess(''); }} className="text-xs text-slate-500 hover:text-emerald-600 transition-colors font-semibold underline underline-offset-4 cursor-pointer">
+              <button
+                type="button"
+                onClick={() => { setIsSignUpView(!isSignUpView); setError(''); setSuccess(''); }}
+                className="text-xs text-slate-400 hover:text-emerald-400 transition-colors font-bold underline underline-offset-4 cursor-pointer"
+              >
                 {isSignUpView ? "Already have an account? Sign In" : "New user? Create an account"}
               </button>
             </div>
